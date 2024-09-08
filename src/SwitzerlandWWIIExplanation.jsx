@@ -77,6 +77,70 @@ const NavigationBar = ({ currentStage, onNavigate, isMusicPlaying, toggleMusic }
   );
 };
 
+const SwitzerlandMap = ({ stopBanking }) => (
+  <svg viewBox="0 0 100 100" style={{ width: '100%', maxWidth: '500px', margin: '0 auto', display: 'block' }}>
+    <path
+      d="M20,50 C20,30 30,20 50,20 C70,20 80,30 80,50 C80,70 70,80 50,80 C30,80 20,70 20,50 Z"
+      fill="#fffaf0"
+      stroke="#4a4a4a"
+      strokeWidth="2"
+    />
+    {!stopBanking && (
+      <g>
+        <circle cx="50" cy="50" r="2" fill="#4a4a4a">
+          <animate
+            attributeName="cx"
+            values="30;70;30"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="cy"
+            values="30;70;30"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+        </circle>
+        <circle cx="50" cy="50" r="2" fill="#4a4a4a">
+          <animate
+            attributeName="cx"
+            values="70;30;70"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="cy"
+            values="70;30;70"
+            dur="3s"
+            repeatCount="indefinite"
+          />
+        </circle>
+      </g>
+    )}
+  </svg>
+);
+
+const ActionButton = ({ onClick, children, isActive, isLarge }) => (
+  <button
+    onClick={onClick}
+    style={{
+      fontSize: isLarge ? '1.4rem' : '1rem',
+      padding: isLarge ? '1rem 2rem' : '0.5rem 1rem',
+      backgroundColor: isActive ? '#4a4a4a' : 'white',
+      color: isActive ? 'white' : '#4a4a4a',
+      border: '2px solid #4a4a4a',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      margin: '0.5rem',
+      fontFamily: 'inherit',
+      transition: 'all 0.3s ease',
+      boxShadow: isActive ? '0 0 10px rgba(0,0,0,0.5)' : 'none',
+    }}
+  >
+    {children}
+  </button>
+);
+
 const InteractiveExplanation = () => {
   const [stage, setStage] = useState('intro');
   const [choice, setChoice] = useState(null);
@@ -85,6 +149,10 @@ const InteractiveExplanation = () => {
   const [nextStage, setNextStage] = useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef(null);
+
+  const [stopBanking, setStopBanking] = useState(false);
+  const [stopTrade, setStopTrade] = useState(false);
+  const [mobilizeTroops, setMobilizeTroops] = useState(false);
 
   const payoffs = {
     germany: {
@@ -126,6 +194,21 @@ const InteractiveExplanation = () => {
       audioRef.current = null;
     };
   }, []);
+
+  const handleContinue = () => {
+    let choice;
+    if (mobilizeTroops && (stopBanking || stopTrade)) {
+      choice = 1; // Mobilize troops and stop trade
+    } else if (!mobilizeTroops && (stopBanking || stopTrade)) {
+      choice = 2; // Not mobilize troops and stop trade
+    } else if (mobilizeTroops && !stopBanking && !stopTrade) {
+      choice = 3; // Mobilize troops and continue trade
+    } else {
+      choice = 4; // Not mobilize troops and continue trade
+    }
+    setChoice(choice);
+    handleStageChange('matrix');
+  };
 
   const pageStyle = {
     fontFamily: '"Comic Sans MS", cursive, sans-serif',
@@ -249,25 +332,30 @@ const InteractiveExplanation = () => {
   );
 
   const renderScenario = () => (
-    <>
+    <div style={{ textAlign: 'center' }}>
       <p style={textStyle}>
         It's 1939. Germany starts its invasion of Poland.
         What would you do as Switzerland if your goal is keeping 
         your neutral status and not get involved in the war?
       </p>
-      <button style={buttonStyle} onClick={() => { setChoice(1); handleStageChange('matrix'); }}>
-        1. Mobilize troops and stop trade
+      <SwitzerlandMap stopBanking={stopBanking} />
+      <div style={{ marginTop: '1rem' }}>
+        <ActionButton onClick={() => setStopBanking(!stopBanking)} isActive={stopBanking}>
+          Stop banking and financial transactions
+        </ActionButton>
+        <ActionButton onClick={() => setStopTrade(!stopTrade)} isActive={stopTrade}>
+          Stop cross-border trade
+        </ActionButton>
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <ActionButton onClick={() => setMobilizeTroops(!mobilizeTroops)} isActive={mobilizeTroops} isLarge>
+          Mobilize troops
+        </ActionButton>
+      </div>
+      <button style={{...buttonStyle, marginTop: '2rem'}} onClick={handleContinue}>
+        Continue
       </button>
-      <button style={buttonStyle} onClick={() => { setChoice(2); handleStageChange('matrix'); }}>
-        2. Not mobilize troops and stop trade
-      </button>
-      <button style={buttonStyle} onClick={() => { setChoice(3); handleStageChange('matrix'); }}>
-        3. Mobilize troops and continue trade
-      </button>
-      <button style={buttonStyle} onClick={() => { setChoice(4); handleStageChange('matrix'); }}>
-        4. Not mobilize troops and continue trade
-      </button>
-    </>
+    </div>
   );
 
   const renderMatrix = () => (
