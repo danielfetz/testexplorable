@@ -80,26 +80,26 @@ const NavigationBar = ({ currentStage, onNavigate, isMusicPlaying, toggleMusic }
 const SwitzerlandMap = ({ stopBanking }) => (
   <svg viewBox="0 0 100 100" style={{ width: '100%', maxWidth: '400px', margin: '0 auto', display: 'block' }}>
     <path
-      d="M20,50 C20,30 30,20 50,20 C70,20 80,30 80,50 C80,70 70,80 50,80 C30,80 20,70 20,50 Z"
+      d="M26.727 39.91c0.909-3.637 3.637-5.455 6.364-7.273 2.727-1.818 5.455-2.727 9.091-2.727 3.636 0 6.364 0.909 9.091 2.727 2.727 1.818 4.546 4.546 5.455 7.273 0.909 2.727 0.909 5.455 0 8.182-0.909 2.727-2.728 5.455-5.455 7.273-2.727 1.818-5.455 2.727-9.091 2.727-3.636 0-6.364-0.909-9.091-2.727-2.727-1.818-4.546-4.546-5.455-7.273-0.909-2.727-0.909-5.455 0-8.182z"
       fill="#fffaf0"
       stroke="#4a4a4a"
-      strokeWidth="2"
+      strokeWidth="1"
     />
     {!stopBanking && (
       <g>
-        <text x="10" y="50" fontSize="10" textAnchor="middle">
-          <tspan x="10" dy="0">💰</tspan>
+        <text x="50" y="50" fontSize="8" textAnchor="middle">
+          <tspan x="50" dy="0">💰</tspan>
           <animateMotion
-            path="M10,50 L90,50"
-            dur="3s"
+            path="M0,50 L50,50"
+            dur="2s"
             repeatCount="indefinite"
           />
         </text>
-        <text x="90" y="50" fontSize="10" textAnchor="middle">
-          <tspan x="90" dy="0">🇨🇭</tspan>
+        <text x="50" y="50" fontSize="8" textAnchor="middle">
+          <tspan x="50" dy="0">💵</tspan>
           <animateMotion
-            path="M90,50 L10,50"
-            dur="3s"
+            path="M50,50 L100,50"
+            dur="2s"
             repeatCount="indefinite"
           />
         </text>
