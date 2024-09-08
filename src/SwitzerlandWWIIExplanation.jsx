@@ -127,16 +127,18 @@ const InteractiveExplanation = () => {
     };
   }, []);
 
-  const containerStyle = {
+  const pageStyle = {
     fontFamily: '"Comic Sans MS", cursive, sans-serif',
+    backgroundColor: '#fffaf0',
+    minHeight: '100vh',
     padding: '2rem',
     paddingBottom: '4rem',
+  };
+
+  const containerStyle = {
     maxWidth: '800px',
     margin: '0 auto',
     marginBottom: '40px',
-    backgroundColor: '#fffaf0',
-    borderRadius: '15px',
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
     position: 'relative',
     zIndex: 1,
   };
@@ -147,7 +149,6 @@ const InteractiveExplanation = () => {
     marginBottom: '1.5rem',
     textAlign: 'center',
     color: '#4a4a4a',
-    textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
   };
 
   const textStyle = {
@@ -308,7 +309,7 @@ const InteractiveExplanation = () => {
   );
 
   return (
-    <>
+    <div style={pageStyle}>
       <div style={containerStyle}>
         <h2 style={titleStyle}>Switzerland in World War II</h2>
         {stage === 'intro' && renderIntro()}
@@ -322,7 +323,7 @@ const InteractiveExplanation = () => {
         toggleMusic={toggleMusic}
       />
       <DiagonalTransition isTransitioning={isTransitioning} onTransitionEnd={handleTransitionEnd} />
-    </>
+    </div>
   );
 };
 
