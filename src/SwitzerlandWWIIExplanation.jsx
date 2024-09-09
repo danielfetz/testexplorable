@@ -202,7 +202,7 @@ const AirplaneGame = () => {
               x: Math.random() * 100,
               y: 0,
               type: Math.random() > 0.5 ? 'US' : 'German',
-              speed: 0.001 + Math.random() * 0.002, // Speed between 0.001 and 0.003 units per millisecond
+              speed: 0.004 + Math.random() * 0.008,
             };
             setPlanes(prevPlanes => [...prevPlanes, newPlane]);
           }
