@@ -170,50 +170,55 @@ const AirplaneGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const svgRef = useRef(null);
-  const gameLoopRef = useRef(null);
+  const lastUpdateTimeRef = useRef(0);
 
   const startGame = () => {
     setGameStarted(true);
     setGameOver(false);
     setScore({ US: 0, German: 0 });
     setPlanes([]);
+    lastUpdateTimeRef.current = 0;
   };
 
   useEffect(() => {
     if (gameStarted && !gameOver) {
-      const spawnPlane = () => {
-        if (planes.length < 5) {
-          const newPlane = {
-            id: Date.now(),
-            x: Math.random() * 100,
-            y: 0,
-            type: Math.random() > 0.5 ? 'US' : 'German',
-          };
-          setPlanes(prevPlanes => [...prevPlanes, newPlane]);
-        }
-      };
+      let animationFrameId;
 
-      const movePlanes = () => {
+      const gameLoop = (timestamp) => {
+        if (lastUpdateTimeRef.current === 0) {
+          lastUpdateTimeRef.current = timestamp;
+        }
+
+        const deltaTime = timestamp - lastUpdateTimeRef.current;
+
+        if (deltaTime > 1000) { // Spawn a new plane every second
+          if (planes.length < 5) {
+            const newPlane = {
+              id: Date.now(),
+              x: Math.random() * 100,
+              y: 0,
+              type: Math.random() > 0.5 ? 'US' : 'German',
+              speed: 0.01 + Math.random() * 0.02, // Speed between 0.01 and 0.03 units per millisecond
+            };
+            setPlanes(prevPlanes => [...prevPlanes, newPlane]);
+          }
+          lastUpdateTimeRef.current = timestamp;
+        }
+
         setPlanes(prevPlanes =>
           prevPlanes.map(plane => ({
             ...plane,
-            y: plane.y + 1,
+            y: plane.y + plane.speed * deltaTime,
           })).filter(plane => plane.y < 70)
         );
+
+        animationFrameId = requestAnimationFrame(gameLoop);
       };
 
-      const gameLoop = () => {
-        spawnPlane();
-        movePlanes();
-        gameLoopRef.current = requestAnimationFrame(gameLoop);
-      };
-
-      gameLoopRef.current = requestAnimationFrame(gameLoop);
+      animationFrameId = requestAnimationFrame(gameLoop);
 
       return () => {
-        if (gameLoopRef.current) {
-          cancelAnimationFrame(gameLoopRef.current);
-        }
+        cancelAnimationFrame(animationFrameId);
       };
     }
   }, [gameStarted, gameOver, planes]);
