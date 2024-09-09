@@ -168,39 +168,58 @@ const AirplaneGame = () => {
   const [planes, setPlanes] = useState([]);
   const [score, setScore] = useState({ US: 0, German: 0 });
   const [gameOver, setGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const svgRef = useRef(null);
+  const gameLoopRef = useRef(null);
+
+  const startGame = () => {
+    setGameStarted(true);
+    setGameOver(false);
+    setScore({ US: 0, German: 0 });
+    setPlanes([]);
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (planes.length < 5 && !gameOver) {
-        const newPlane = {
-          id: Date.now(),
-          x: Math.random() * 100,
-          y: 0,
-          type: Math.random() > 0.5 ? 'US' : 'German',
-        };
-        setPlanes(prevPlanes => [...prevPlanes, newPlane]);
-      }
-    }, 2000);
+    if (gameStarted && !gameOver) {
+      const spawnPlane = () => {
+        if (planes.length < 5) {
+          const newPlane = {
+            id: Date.now(),
+            x: Math.random() * 100,
+            y: 0,
+            type: Math.random() > 0.5 ? 'US' : 'German',
+          };
+          setPlanes(prevPlanes => [...prevPlanes, newPlane]);
+        }
+      };
 
-    return () => clearInterval(interval);
-  }, [planes, gameOver]);
+      const movePlanes = () => {
+        setPlanes(prevPlanes =>
+          prevPlanes.map(plane => ({
+            ...plane,
+            y: plane.y + 1,
+          })).filter(plane => plane.y < 70)
+        );
+      };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPlanes(prevPlanes =>
-        prevPlanes.map(plane => ({
-          ...plane,
-          y: plane.y + 1,
-        })).filter(plane => plane.y < 70)
-      );
-    }, 50);
+      const gameLoop = () => {
+        spawnPlane();
+        movePlanes();
+        gameLoopRef.current = requestAnimationFrame(gameLoop);
+      };
 
-    return () => clearInterval(interval);
-  }, []);
+      gameLoopRef.current = requestAnimationFrame(gameLoop);
+
+      return () => {
+        if (gameLoopRef.current) {
+          cancelAnimationFrame(gameLoopRef.current);
+        }
+      };
+    }
+  }, [gameStarted, gameOver, planes]);
 
   const handleShoot = (event) => {
-    if (gameOver) return;
+    if (gameOver || !gameStarted) return;
 
     const svgRect = svgRef.current.getBoundingClientRect();
     const x = (event.clientX - svgRect.left) / svgRect.width * 100;
@@ -219,6 +238,7 @@ const AirplaneGame = () => {
 
       if (score.US + score.German + 1 >= 10) {
         setGameOver(true);
+        setGameStarted(false);
       }
     }
   };
@@ -252,8 +272,20 @@ const AirplaneGame = () => {
         ))}
       </svg>
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        {!gameStarted && !gameOver && (
+          <button onClick={startGame} style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }}>
+            Start Game
+          </button>
+        )}
         <p>Score - US: {score.US}, German: {score.German}</p>
-        {gameOver && <p>Game Over! You shot down 10 planes.</p>}
+        {gameOver && (
+          <>
+            <p>Game Over! You shot down 10 planes.</p>
+            <button onClick={startGame} style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }}>
+              Play Again
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
