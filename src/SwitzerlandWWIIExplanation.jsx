@@ -195,8 +195,8 @@ const AirplaneGame = () => {
         const deltaTime = timestamp - lastUpdateTimeRef.current;
 
         // Spawn a new plane every 3 seconds
-        if (timestamp - lastSpawnTimeRef.current > 1000) {
-          if (planes.length < 5) {
+        if (timestamp - lastSpawnTimeRef.current > 500) {
+          if (planes.length < 8) {
             const newPlane = {
               id: Date.now(),
               x: Math.random() * 100,
