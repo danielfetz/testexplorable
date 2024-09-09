@@ -238,6 +238,7 @@ const AirplaneGame = () => {
           stroke="#4a4a4a"
           strokeWidth="0.5"
         />
+        {/* Render planes */}
         {planes.map(plane => (
           <g key={plane.id} transform={`translate(${plane.x}, ${plane.y})`}>
             <path d="M-2,-2 L2,2 M-2,2 L2,-2" stroke={plane.type === 'US' ? 'blue' : 'red'} strokeWidth="0.5" />
@@ -436,6 +437,7 @@ const InteractiveExplanation = () => {
 
   const renderIntro = () => (
     <>
+      <h2 style={titleStyle}>Switzerland in World War II</h2>
       <p style={textStyle}>
         During World War II, Switzerland remained untouched while war ravaged throughout the European continent.
       </p>
@@ -459,6 +461,7 @@ const InteractiveExplanation = () => {
 
   const renderScenario = () => (
     <div style={{ textAlign: 'center' }}>
+      <h2 style={titleStyle}>Switzerland's Dilemma</h2>
       <p style={textStyle}>
         It's 1939. Germany starts its invasion of Poland.
         What would you do as Switzerland if your goal is keeping 
@@ -495,6 +498,7 @@ const InteractiveExplanation = () => {
 
   const renderMatrix = () => (
     <>
+      <h2 style={titleStyle}>Payoff Matrix</h2>
       <div style={checkboxContainerStyle}>
         <label>
           <input
@@ -551,7 +555,7 @@ const InteractiveExplanation = () => {
       </div>
       <NavigationBar 
         currentStage={stage} 
-        onNavigate={setStage}
+        onNavigate={handleStageChange}
         isMusicPlaying={isMusicPlaying}
         toggleMusic={toggleMusic}
       />
