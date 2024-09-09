@@ -77,36 +77,55 @@ const NavigationBar = ({ currentStage, onNavigate, isMusicPlaying, toggleMusic }
   );
 };
 
-const SwitzerlandMap = ({ stopBanking }) => (
-  <svg viewBox="0 0 100 70" style={{ width: '100%', maxWidth: '400px', margin: '0 auto', display: 'block' }}>
-    <path
-      d="M26,2 C24,2.5 22,3 20.5,4.5 C19,6 17.5,7.5 16,9 C14.5,10.5 13,12 11.5,13.5 C10,15 8.5,16.5 7,18 C5.5,19.5 4,21 2.5,22.5 C1,24 0.5,25.5 1,27 C1.5,28.5 2,30 3.5,31 C5,32 6.5,33 8,34 C9.5,35 11,36 12.5,37 C14,38 15.5,39 17,40 C18.5,41 20,42 21.5,43 C23,44 24.5,45 26,46 C27.5,47 29,48 30.5,49 C32,50 33.5,51 35,52 C36.5,53 38,54 39.5,55 C41,56 42.5,57 44,58 C45.5,59 47,60 48.5,61 C50,62 51.5,63 53,64 C54.5,65 56,66 57.5,67 C59,68 60.5,68.5 62,68 C63.5,67.5 65,67 66.5,66.5 C68,66 69.5,65.5 71,65 C72.5,64.5 74,64 75.5,63.5 C77,63 78.5,62.5 80,62 C81.5,61.5 83,61 84.5,60.5 C86,60 87.5,59.5 89,59 C90.5,58.5 92,58 93.5,57.5 C95,57 96.5,56.5 97.5,55.5 C98.5,54.5 99,53.5 99,52 C99,50.5 98.5,49 98,47.5 C97.5,46 97,44.5 96.5,43 C96,41.5 95.5,40 95,38.5 C94.5,37 94,35.5 93.5,34 C93,32.5 92.5,31 92,29.5 C91.5,28 91,26.5 90.5,25 C90,23.5 89.5,22 89,20.5 C88.5,19 88,17.5 87.5,16 C87,14.5 86.5,13 86,11.5 C85.5,10 85,8.5 84.5,7 C84,5.5 83.5,4 82.5,3 C81.5,2 80.5,1.5 79,1.5 C77.5,1.5 76,2 74.5,2.5 C73,3 71.5,3.5 70,4 C68.5,4.5 67,5 65.5,5.5 C64,6 62.5,6.5 61,7 C59.5,7.5 58,8 56.5,8.5 C55,9 53.5,9.5 52,10 C50.5,10.5 49,11 47.5,11.5 C46,12 44.5,12.5 43,13 C41.5,13.5 40,14 38.5,14.5 C37,15 35.5,15.5 34,16 C32.5,16.5 31,17 29.5,17.5 C28,18 26.5,18.5 26,19 C25.5,19.5 25.5,20 26,20.5 C26.5,21 27,21.5 27.5,22 C28,22.5 28.5,23 29,23.5 C29.5,24 30,24.5 30.5,25 C31,25.5 31.5,26 32,26.5 C32.5,27 33,27.5 33,28 C33,28.5 32.5,29 32,29.5 C31.5,30 31,30.5 30.5,31 C30,31.5 29.5,32 29,32.5 C28.5,33 28,33.5 27.5,34 C27,34.5 26.5,35 26,35.5 C25.5,36 25,36.5 24.5,37 C24,37.5 23.5,38 23,38.5 C22.5,39 22,39.5 22,40 C22,40.5 22.5,41 23,41.5 C23.5,42 24,42.5 24.5,43 C25,43.5 25.5,44 26,44.5 Z"
-      fill="#fffaf0"
-      stroke="#4a4a4a"
-      strokeWidth="0.5"
-    />
-    {!stopBanking && (
-      <g>
-        <text x="50" y="35" fontSize="8" textAnchor="middle">
-          <tspan x="50" dy="0">💰</tspan>
-          <animateMotion
-            path="M20,35 H80"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-        </text>
-        <text x="50" y="35" fontSize="8" textAnchor="middle">
-          <tspan x="50" dy="0">💵</tspan>
-          <animateMotion
-            path="M80,35 H20"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-        </text>
-      </g>
-    )}
-  </svg>
-);
+const SwitzerlandMap = ({ stopBanking, mobilizeTroops }) => {
+  const soldiers = [
+    { x: 20, y: 15 },
+    { x: 80, y: 25 },
+    { x: 50, y: 55 },
+    { x: 15, y: 40 },
+    { x: 85, y: 50 },
+  ];
+
+  return (
+    <svg viewBox="0 0 100 70" style={{ width: '100%', maxWidth: '400px', margin: '0 auto', display: 'block' }}>
+      <path
+        d="M26,2 C24,2.5 22,3 20.5,4.5 C19,6 17.5,7.5 16,9 C14.5,10.5 13,12 11.5,13.5 C10,15 8.5,16.5 7,18 C5.5,19.5 4,21 2.5,22.5 C1,24 0.5,25.5 1,27 C1.5,28.5 2,30 3.5,31 C5,32 6.5,33 8,34 C9.5,35 11,36 12.5,37 C14,38 15.5,39 17,40 C18.5,41 20,42 21.5,43 C23,44 24.5,45 26,46 C27.5,47 29,48 30.5,49 C32,50 33.5,51 35,52 C36.5,53 38,54 39.5,55 C41,56 42.5,57 44,58 C45.5,59 47,60 48.5,61 C50,62 51.5,63 53,64 C54.5,65 56,66 57.5,67 C59,68 60.5,68.5 62,68 C63.5,67.5 65,67 66.5,66.5 C68,66 69.5,65.5 71,65 C72.5,64.5 74,64 75.5,63.5 C77,63 78.5,62.5 80,62 C81.5,61.5 83,61 84.5,60.5 C86,60 87.5,59.5 89,59 C90.5,58.5 92,58 93.5,57.5 C95,57 96.5,56.5 97.5,55.5 C98.5,54.5 99,53.5 99,52 C99,50.5 98.5,49 98,47.5 C97.5,46 97,44.5 96.5,43 C96,41.5 95.5,40 95,38.5 C94.5,37 94,35.5 93.5,34 C93,32.5 92.5,31 92,29.5 C91.5,28 91,26.5 90.5,25 C90,23.5 89.5,22 89,20.5 C88.5,19 88,17.5 87.5,16 C87,14.5 86.5,13 86,11.5 C85.5,10 85,8.5 84.5,7 C84,5.5 83.5,4 82.5,3 C81.5,2 80.5,1.5 79,1.5 C77.5,1.5 76,2 74.5,2.5 C73,3 71.5,3.5 70,4 C68.5,4.5 67,5 65.5,5.5 C64,6 62.5,6.5 61,7 C59.5,7.5 58,8 56.5,8.5 C55,9 53.5,9.5 52,10 C50.5,10.5 49,11 47.5,11.5 C46,12 44.5,12.5 43,13 C41.5,13.5 40,14 38.5,14.5 C37,15 35.5,15.5 34,16 C32.5,16.5 31,17 29.5,17.5 C28,18 26.5,18.5 26,19 C25.5,19.5 25.5,20 26,20.5 C26.5,21 27,21.5 27.5,22 C28,22.5 28.5,23 29,23.5 C29.5,24 30,24.5 30.5,25 C31,25.5 31.5,26 32,26.5 C32.5,27 33,27.5 33,28 C33,28.5 32.5,29 32,29.5 C31.5,30 31,30.5 30.5,31 C30,31.5 29.5,32 29,32.5 C28.5,33 28,33.5 27.5,34 C27,34.5 26.5,35 26,35.5 C25.5,36 25,36.5 24.5,37 C24,37.5 23.5,38 23,38.5 C22.5,39 22,39.5 22,40 C22,40.5 22.5,41 23,41.5 C23.5,42 24,42.5 24.5,43 C25,43.5 25.5,44 26,44.5 Z"
+        fill="#fffaf0"
+        stroke="#4a4a4a"
+        strokeWidth="0.5"
+      />
+      {!stopBanking && (
+        <g>
+          <text x="50" y="35" fontSize="8" textAnchor="middle">
+            <tspan x="50" dy="0">💰</tspan>
+            <animateMotion
+              path="M20,35 H80"
+              dur="2s"
+              repeatCount="indefinite"
+            />
+          </text>
+          <text x="50" y="35" fontSize="8" textAnchor="middle">
+            <tspan x="50" dy="0">💵</tspan>
+            <animateMotion
+              path="M80,35 H20"
+              dur="2s"
+              repeatCount="indefinite"
+            />
+          </text>
+        </g>
+      )}
+      {mobilizeTroops && soldiers.map((soldier, index) => (
+        <g key={index} transform={`translate(${soldier.x}, ${soldier.y})`}>
+          <circle cx="0" cy="0" r="1.5" fill="#4a4a4a" />
+          <line x1="0" y1="1.5" x2="0" y2="4" stroke="#4a4a4a" strokeWidth="0.5" />
+          <line x1="-1" y1="4" x2="1" y2="4" stroke="#4a4a4a" strokeWidth="0.5" />
+          <line x1="0" y1="2.5" x2="-1" y2="4" stroke="#4a4a4a" strokeWidth="0.5" />
+          <line x1="0" y1="2.5" x2="1" y2="4" stroke="#4a4a4a" strokeWidth="0.5" />
+        </g>
+      ))}
+    </svg>
+  );
+};
 
 const ActionButton = ({ onClick, children, isActive, isLarge }) => (
   <button
@@ -143,6 +162,10 @@ const InteractiveExplanation = () => {
   const [stopBanking, setStopBanking] = useState(false);
   const [stopTrade, setStopTrade] = useState(false);
   const [mobilizeTroops, setMobilizeTroops] = useState(false);
+
+  const handleMobilizeTroops = () => {
+    setMobilizeTroops(!mobilizeTroops);
+  };
 
   const payoffs = {
     germany: {
@@ -328,22 +351,22 @@ const InteractiveExplanation = () => {
         What would you do as Switzerland if your goal is keeping 
         your neutral status and not get involved in the war?
       </p>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-        <div style={{ width: '40%', marginRight: '2rem' }}>
-          <ActionButton onClick={() => setStopBanking(!stopBanking)} isActive={stopBanking}>
-            Stop banking and financial transactions
-          </ActionButton>
-          <ActionButton onClick={() => setStopTrade(!stopTrade)} isActive={stopTrade}>
-            Stop cross-border trade
-          </ActionButton>
-          <ActionButton onClick={() => setMobilizeTroops(!mobilizeTroops)} isActive={mobilizeTroops} isLarge>
-            Mobilize troops
-          </ActionButton>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div style={{ width: '40%', marginRight: '2rem' }}>
+            <ActionButton onClick={() => setStopBanking(!stopBanking)} isActive={stopBanking}>
+              Stop banking and financial transactions
+            </ActionButton>
+            <ActionButton onClick={() => setStopTrade(!stopTrade)} isActive={stopTrade}>
+              Stop cross-border trade
+            </ActionButton>
+            <ActionButton onClick={handleMobilizeTroops} isActive={mobilizeTroops} isLarge>
+              Mobilize troops
+            </ActionButton>
+          </div>
+          <div style={{ width: '60%' }}>
+            <SwitzerlandMap stopBanking={stopBanking} mobilizeTroops={mobilizeTroops} />
+          </div>
         </div>
-        <div style={{ width: '60%' }}>
-          <SwitzerlandMap stopBanking={stopBanking} />
-        </div>
-      </div>
       <button style={{...buttonStyle, marginTop: '2rem'}} onClick={handleContinue}>
         Continue
       </button>
