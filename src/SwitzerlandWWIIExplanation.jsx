@@ -171,6 +171,7 @@ const AirplaneGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const svgRef = useRef(null);
   const lastUpdateTimeRef = useRef(0);
+  const lastSpawnTimeRef = useRef(0);
 
   const startGame = () => {
     setGameStarted(true);
@@ -178,6 +179,7 @@ const AirplaneGame = () => {
     setScore({ US: 0, German: 0 });
     setPlanes([]);
     lastUpdateTimeRef.current = 0;
+    lastSpawnTimeRef.current = 0;
   };
 
   useEffect(() => {
@@ -187,22 +189,24 @@ const AirplaneGame = () => {
       const gameLoop = (timestamp) => {
         if (lastUpdateTimeRef.current === 0) {
           lastUpdateTimeRef.current = timestamp;
+          lastSpawnTimeRef.current = timestamp;
         }
 
         const deltaTime = timestamp - lastUpdateTimeRef.current;
 
-        if (deltaTime > 1000) { // Spawn a new plane every second
+        // Spawn a new plane every 3 seconds
+        if (timestamp - lastSpawnTimeRef.current > 3000) {
           if (planes.length < 5) {
             const newPlane = {
               id: Date.now(),
               x: Math.random() * 100,
               y: 0,
               type: Math.random() > 0.5 ? 'US' : 'German',
-              speed: 0.01 + Math.random() * 0.02, // Speed between 0.01 and 0.03 units per millisecond
+              speed: 0.001 + Math.random() * 0.002, // Speed between 0.001 and 0.003 units per millisecond
             };
             setPlanes(prevPlanes => [...prevPlanes, newPlane]);
           }
-          lastUpdateTimeRef.current = timestamp;
+          lastSpawnTimeRef.current = timestamp;
         }
 
         setPlanes(prevPlanes =>
@@ -212,6 +216,7 @@ const AirplaneGame = () => {
           })).filter(plane => plane.y < 70)
         );
 
+        lastUpdateTimeRef.current = timestamp;
         animationFrameId = requestAnimationFrame(gameLoop);
       };
 
@@ -266,12 +271,12 @@ const AirplaneGame = () => {
         {/* Render planes */}
         {planes.map(plane => (
           <g key={plane.id} transform={`translate(${plane.x}, ${plane.y})`}>
-            <path d="M-2,-2 L2,2 M-2,2 L2,-2" stroke={plane.type === 'US' ? 'blue' : 'red'} strokeWidth="0.5" />
-            <rect x="-1" y="-1" width="2" height="2" fill={plane.type === 'US' ? 'blue' : 'red'} />
+            <path d="M-3,-3 L3,3 M-3,3 L3,-3" stroke={plane.type === 'US' ? 'blue' : 'red'} strokeWidth="0.75" />
+            <rect x="-1.5" y="-1.5" width="3" height="3" fill={plane.type === 'US' ? 'blue' : 'red'} />
             {plane.type === 'US' ? (
-              <text x="3" y="0" fontSize="3" fill="blue">🇺🇸</text>
+              <text x="4" y="0" fontSize="4" fill="blue">🇺🇸</text>
             ) : (
-              <text x="3" y="0" fontSize="3" fill="red">🇩🇪</text>
+              <text x="4" y="0" fontSize="4" fill="red">🇩🇪</text>
             )}
           </g>
         ))}
