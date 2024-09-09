@@ -195,14 +195,14 @@ const AirplaneGame = () => {
         const deltaTime = timestamp - lastUpdateTimeRef.current;
 
         // Spawn a new plane every 3 seconds
-        if (timestamp - lastSpawnTimeRef.current > 3000) {
+        if (timestamp - lastSpawnTimeRef.current > 1000) {
           if (planes.length < 5) {
             const newPlane = {
               id: Date.now(),
               x: Math.random() * 100,
               y: 0,
               type: Math.random() > 0.5 ? 'US' : 'German',
-              speed: 0.004 + Math.random() * 0.008,
+              speed: 0.016 + Math.random() * 0.040,
             };
             setPlanes(prevPlanes => [...prevPlanes, newPlane]);
           }
