@@ -170,9 +170,12 @@ const AirplaneGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [germanWarning, setGermanWarning] = useState(false);
+  const [warWarning, setWarWarning] = useState(false);
   const svgRef = useRef(null);
   const lastUpdateTimeRef = useRef(0);
   const lastSpawnTimeRef = useRef(0);
+
+  const switzerlandPath = "M26,2 C24,2.5 22,3 20.5,4.5 C19,6 17.5,7.5 16,9 C14.5,10.5 13,12 11.5,13.5 C10,15 8.5,16.5 7,18 C5.5,19.5 4,21 2.5,22.5 C1,24 0.5,25.5 1,27 C1.5,28.5 2,30 3.5,31 C5,32 6.5,33 8,34 C9.5,35 11,36 12.5,37 C14,38 15.5,39 17,40 C18.5,41 20,42 21.5,43 C23,44 24.5,45 26,46 C27.5,47 29,48 30.5,49 C32,50 33.5,51 35,52 C36.5,53 38,54 39.5,55 C41,56 42.5,57 44,58 C45.5,59 47,60 48.5,61 C50,62 51.5,63 53,64 C54.5,65 56,66 57.5,67 C59,68 60.5,68.5 62,68 C63.5,67.5 65,67 66.5,66.5 C68,66 69.5,65.5 71,65 C72.5,64.5 74,64 75.5,63.5 C77,63 78.5,62.5 80,62 C81.5,61.5 83,61 84.5,60.5 C86,60 87.5,59.5 89,59 C90.5,58.5 92,58 93.5,57.5 C95,57 96.5,56.5 97.5,55.5 C98.5,54.5 99,53.5 99,52 C99,50.5 98.5,49 98,47.5 C97.5,46 97,44.5 96.5,43 C96,41.5 95.5,40 95,38.5 C94.5,37 94,35.5 93.5,34 C93,32.5 92.5,31 92,29.5 C91.5,28 91,26.5 90.5,25 C90,23.5 89.5,22 89,20.5 C88.5,19 88,17.5 87.5,16 C87,14.5 86.5,13 86,11.5 C85.5,10 85,8.5 84.5,7 C84,5.5 83.5,4 82.5,3 C81.5,2 80.5,1.5 79,1.5 C77.5,1.5 76,2 74.5,2.5 C73,3 71.5,3.5 70,4 C68.5,4.5 67,5 65.5,5.5 C64,6 62.5,6.5 61,7 C59.5,7.5 58,8 56.5,8.5 C55,9 53.5,9.5 52,10 C50.5,10.5 49,11 47.5,11.5 C46,12 44.5,12.5 43,13 C41.5,13.5 40,14 38.5,14.5 C37,15 35.5,15.5 34,16 C32.5,16.5 31,17 29.5,17.5 C28,18 26.5,18.5 26,19 C25.5,19.5 25.5,20 26,20.5 C26.5,21 27,21.5 27.5,22 C28,22.5 28.5,23 29,23.5 C29.5,24 30,24.5 30.5,25 C31,25.5 31.5,26 32,26.5 C32.5,27 33,27.5 33,28 C33,28.5 32.5,29 32,29.5 C31.5,30 31,30.5 30.5,31 C30,31.5 29.5,32 29,32.5 C28.5,33 28,33.5 27.5,34 C27,34.5 26.5,35 26,35.5 C25.5,36 25,36.5 24.5,37 C24,37.5 23.5,38 23,38.5 C22.5,39 22,39.5 22,40 C22,40.5 22.5,41 23,41.5 C23.5,42 24,42.5 24.5,43 C25,43.5 25.5,44 26,44.5 Z";
 
   const startGame = () => {
     setGameStarted(true);
@@ -180,6 +183,7 @@ const AirplaneGame = () => {
     setScore({ US: 0, German: 0 });
     setPlanes([]);
     setGermanWarning(false);
+    setWarWarning(false);
     lastUpdateTimeRef.current = 0;
     lastSpawnTimeRef.current = 0;
   };
@@ -230,6 +234,15 @@ const AirplaneGame = () => {
     }
   }, [gameStarted, gameOver, planes]);
 
+  const isPointInSwitzerland = (x, y) => {
+    const point = svgRef.current.createSVGPoint();
+    point.x = x;
+    point.y = y;
+    
+    const path = svgRef.current.querySelector('#switzerland-path');
+    return path.isPointInFill(point) || path.isPointInStroke(point);
+  };
+
   const handleShoot = (event) => {
     if (gameOver || !gameStarted) return;
 
@@ -242,6 +255,11 @@ const AirplaneGame = () => {
     );
 
     if (hitPlane) {
+      if (!isPointInSwitzerland(x, y)) {
+        setWarWarning(true);
+        setTimeout(() => setWarWarning(false), 3000); // Hide warning after 3 seconds
+      }
+
       setPlanes(prevPlanes => prevPlanes.filter(plane => plane.id !== hitPlane.id));
       setScore(prevScore => {
         const newScore = {
@@ -284,13 +302,14 @@ const AirplaneGame = () => {
         style={{ width: '100%', maxWidth: '600px', margin: '0 auto', display: 'block', border: '1px solid black' }}
         onClick={handleShoot}
       >
-        {/* Switzerland map path */}
         <path
-          d="M26,2 C24,2.5 22,3 20.5,4.5 C19,6 17.5,7.5 16,9 C14.5,10.5 13,12 11.5,13.5 C10,15 8.5,16.5 7,18 C5.5,19.5 4,21 2.5,22.5 C1,24 0.5,25.5 1,27 C1.5,28.5 2,30 3.5,31 C5,32 6.5,33 8,34 C9.5,35 11,36 12.5,37 C14,38 15.5,39 17,40 C18.5,41 20,42 21.5,43 C23,44 24.5,45 26,46 C27.5,47 29,48 30.5,49 C32,50 33.5,51 35,52 C36.5,53 38,54 39.5,55 C41,56 42.5,57 44,58 C45.5,59 47,60 48.5,61 C50,62 51.5,63 53,64 C54.5,65 56,66 57.5,67 C59,68 60.5,68.5 62,68 C63.5,67.5 65,67 66.5,66.5 C68,66 69.5,65.5 71,65 C72.5,64.5 74,64 75.5,63.5 C77,63 78.5,62.5 80,62 C81.5,61.5 83,61 84.5,60.5 C86,60 87.5,59.5 89,59 C90.5,58.5 92,58 93.5,57.5 C95,57 96.5,56.5 97.5,55.5 C98.5,54.5 99,53.5 99,52 C99,50.5 98.5,49 98,47.5 C97.5,46 97,44.5 96.5,43 C96,41.5 95.5,40 95,38.5 C94.5,37 94,35.5 93.5,34 C93,32.5 92.5,31 92,29.5 C91.5,28 91,26.5 90.5,25 C90,23.5 89.5,22 89,20.5 C88.5,19 88,17.5 87.5,16 C87,14.5 86.5,13 86,11.5 C85.5,10 85,8.5 84.5,7 C84,5.5 83.5,4 82.5,3 C81.5,2 80.5,1.5 79,1.5 C77.5,1.5 76,2 74.5,2.5 C73,3 71.5,3.5 70,4 C68.5,4.5 67,5 65.5,5.5 C64,6 62.5,6.5 61,7 C59.5,7.5 58,8 56.5,8.5 C55,9 53.5,9.5 52,10 C50.5,10.5 49,11 47.5,11.5 C46,12 44.5,12.5 43,13 C41.5,13.5 40,14 38.5,14.5 C37,15 35.5,15.5 34,16 C32.5,16.5 31,17 29.5,17.5 C28,18 26.5,18.5 26,19 C25.5,19.5 25.5,20 26,20.5 C26.5,21 27,21.5 27.5,22 C28,22.5 28.5,23 29,23.5 C29.5,24 30,24.5 30.5,25 C31,25.5 31.5,26 32,26.5 C32.5,27 33,27.5 33,28 C33,28.5 32.5,29 32,29.5 C31.5,30 31,30.5 30.5,31 C30,31.5 29.5,32 29,32.5 C28.5,33 28,33.5 27.5,34 C27,34.5 26.5,35 26,35.5 C25.5,36 25,36.5 24.5,37 C24,37.5 23.5,38 23,38.5 C22.5,39 22,39.5 22,40 C22,40.5 22.5,41 23,41.5 C23.5,42 24,42.5 24.5,43 C25,43.5 25.5,44 26,44.5 Z"
+          id="switzerland-path"
+          d={switzerlandPath}
           fill="#fffaf0"
           stroke="#4a4a4a"
           strokeWidth="0.5"
         />
+        
         {/* Render planes */}
         {planes.map(plane => (
           <g key={plane.id} transform={`translate(${plane.x}, ${plane.y})`}>
@@ -308,6 +327,12 @@ const AirplaneGame = () => {
         <div style={warningStyle}>
           <p>The German consulate is angry!</p>
           <p>If you don't take care of your neutrality, we will.</p>
+        </div>
+      )}
+      {warWarning && (
+        <div style={warningStyle}>
+          <p>We're starting war!</p>
+          <p>You've shot down a plane outside Swiss borders.</p>
         </div>
       )}
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
