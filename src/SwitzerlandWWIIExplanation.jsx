@@ -362,6 +362,7 @@ const InteractiveExplanation = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [nextStage, setNextStage] = useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [showGoldPopup, setShowGoldPopup] = useState(false);
   const audioRef = useRef(null);
 
   const [stopBanking, setStopBanking] = useState(false);
@@ -531,6 +532,36 @@ const InteractiveExplanation = () => {
     pointerEvents: 'none',
   };
 
+    const popupStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+    padding: '20px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    zIndex: 1000,
+    maxWidth: '80%',
+    width: '400px',
+  };
+
+  const popupCloseButtonStyle = {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'none',
+    border: 'none',
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+  };
+
+  const clickableTextStyle = {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: '#0000FF',
+  };
+
   const renderIntro = () => (
     <>
       <h2 style={titleStyle}>Switzerland in World War II</h2>
@@ -538,7 +569,7 @@ const InteractiveExplanation = () => {
         During World War II, Switzerland remained untouched while war ravaged throughout the European continent.
       </p>
       <p style={textStyle}>
-        Sure, Switzerland was useful for Nazi Germany as purchaser of gold, and as a hiding place for stolen artworks and jewellery.
+        Sure, Switzerland was useful for Nazi Germany as <span style={clickableTextStyle} onClick={() => setShowGoldPopup(true)}>purchaser of gold</span>, and as a hiding place for stolen artworks and jewellery.
       </p>
       <p style={textStyle}>
         But Switzerland purchased even larger quantities of gold from Allied powers, and from 1942 onwards was home to a US intelligence agency base. Therefore one has to wonder why Nazi Germany never followed through with its countless plans to invade Switzerland when they still realistically could before being embattled to such an extent that they couldn't spare any troops.
@@ -552,6 +583,13 @@ const InteractiveExplanation = () => {
       <button style={buttonStyle} onClick={() => handleStageChange('scenario')}>
         Next
       </button>
+      {showGoldPopup && (
+        <div style={popupStyle}>
+          <button style={popupCloseButtonStyle} onClick={() => setShowGoldPopup(false)}>×</button>
+          <h3>Gold Transactions in World War II</h3>
+          <p>Nazi Germany was only second behind US as the largest seller of Gold in WW2.</p>
+        </div>
+      )}
     </>
   );
 
