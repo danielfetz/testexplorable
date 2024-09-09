@@ -169,6 +169,7 @@ const AirplaneGame = () => {
   const [score, setScore] = useState({ US: 0, German: 0 });
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [germanWarning, setGermanWarning] = useState(false);
   const svgRef = useRef(null);
   const lastUpdateTimeRef = useRef(0);
   const lastSpawnTimeRef = useRef(0);
@@ -178,6 +179,7 @@ const AirplaneGame = () => {
     setGameOver(false);
     setScore({ US: 0, German: 0 });
     setPlanes([]);
+    setGermanWarning(false);
     lastUpdateTimeRef.current = 0;
     lastSpawnTimeRef.current = 0;
   };
@@ -194,7 +196,7 @@ const AirplaneGame = () => {
 
         const deltaTime = timestamp - lastUpdateTimeRef.current;
 
-        // Spawn a new plane every 3 seconds
+        // Spawn a new plane every 0.5 seconds
         if (timestamp - lastSpawnTimeRef.current > 500) {
           if (planes.length < 8) {
             const newPlane = {
@@ -202,7 +204,7 @@ const AirplaneGame = () => {
               x: Math.random() * 100,
               y: 0,
               type: Math.random() > 0.5 ? 'US' : 'German',
-              speed: 0.016 + Math.random() * 0.040,
+              speed: 0.016 + Math.random() * 0.040, // Speed between 0.001 and 0.003 units per millisecond
             };
             setPlanes(prevPlanes => [...prevPlanes, newPlane]);
           }
@@ -241,10 +243,18 @@ const AirplaneGame = () => {
 
     if (hitPlane) {
       setPlanes(prevPlanes => prevPlanes.filter(plane => plane.id !== hitPlane.id));
-      setScore(prevScore => ({
-        ...prevScore,
-        [hitPlane.type]: prevScore[hitPlane.type] + 1
-      }));
+      setScore(prevScore => {
+        const newScore = {
+          ...prevScore,
+          [hitPlane.type]: prevScore[hitPlane.type] + 1
+        };
+        
+        if (hitPlane.type === 'German' && newScore.German > 6) {
+          setGermanWarning(true);
+        }
+        
+        return newScore;
+      });
 
       if (score.US + score.German + 1 >= 10) {
         setGameOver(true);
@@ -253,8 +263,21 @@ const AirplaneGame = () => {
     }
   };
 
+  const warningStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'rgba(255, 0, 0, 0.8)',
+    color: 'white',
+    padding: '20px',
+    borderRadius: '10px',
+    textAlign: 'center',
+    zIndex: 1000,
+  };
+
   return (
-    <div style={{ cursor: 'crosshair' }}>
+    <div style={{ cursor: 'crosshair', position: 'relative' }}>
       <svg
         ref={svgRef}
         viewBox="0 0 100 70"
@@ -281,6 +304,12 @@ const AirplaneGame = () => {
           </g>
         ))}
       </svg>
+      {germanWarning && (
+        <div style={warningStyle}>
+          <p>The German consulate is angry!</p>
+          <p>If you don't take care of your neutrality, we will.</p>
+        </div>
+      )}
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
         {!gameStarted && !gameOver && (
           <button onClick={startGame} style={{ fontSize: '1.2rem', padding: '0.5rem 1rem' }}>
