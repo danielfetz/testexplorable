@@ -370,12 +370,31 @@ const InteractiveExplanation = () => {
   const [mobilizeTroops, setMobilizeTroops] = useState(false);
   const [growPotatoes, setGrowPotatoes] = useState(false);
 
+  const [oil, setOil] = useState(100);
+  const [food, setFood] = useState(100);
+
+  const handleStopTrade = () => {
+    setStopTrade(!stopTrade);
+    if (!stopTrade) {
+      setOil(0);
+      setFood(Math.max(food - 60, 10)); // Reduce food to 10 if it would go below
+    } else {
+      setOil(100);
+      setFood(Math.min(food + 60, 100)); // Increase food, but cap at 100
+    }
+  };
+
   const handleMobilizeTroops = () => {
     setMobilizeTroops(!mobilizeTroops);
   };
 
   const handleGrowPotatoes = () => {
     setGrowPotatoes(!growPotatoes);
+    if (!growPotatoes) {
+      setFood(Math.min(food + 30, 100)); // Increase food, but cap at 100
+    } else {
+      setFood(Math.max(food - 30, 0)); // Decrease food, but not below 0
+    }
   };
 
   const payoffs = {
@@ -593,6 +612,40 @@ const InteractiveExplanation = () => {
     </>
   );
 
+  const scoreboardStyle = {
+    backgroundColor: '#f0f0f0',
+    padding: '1rem',
+    borderRadius: '10px',
+    marginBottom: '1rem',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  };
+
+  const resourceBarStyle = (value) => ({
+    width: `${value}%`,
+    height: '20px',
+    backgroundColor: value > 50 ? 'green' : value > 25 ? 'orange' : 'red',
+    borderRadius: '5px',
+    transition: 'width 0.5s ease-in-out',
+  });
+
+  const renderScoreboard = () => (
+    <div style={scoreboardStyle}>
+      <h3 style={{marginTop: 0}}>Resource Levels</h3>
+      <div>
+        <p style={{marginBottom: '5px'}}>Oil: {oil}%</p>
+        <div style={{backgroundColor: '#ddd', borderRadius: '5px'}}>
+          <div style={resourceBarStyle(oil)}></div>
+        </div>
+      </div>
+      <div style={{marginTop: '1rem'}}>
+        <p style={{marginBottom: '5px'}}>Food: {food}%</p>
+        <div style={{backgroundColor: '#ddd', borderRadius: '5px'}}>
+          <div style={resourceBarStyle(food)}></div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderScenario = () => (
     <div style={{ textAlign: 'center' }}>
       <h2 style={titleStyle}>Switzerland's Dilemma</h2>
@@ -601,29 +654,30 @@ const InteractiveExplanation = () => {
         What would you do as Switzerland if your goal is keeping 
         your neutral status and not get involved in the war?
       </p>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-          <div style={{ width: '40%', marginRight: '2rem' }}>
-            <ActionButton onClick={() => setStopBanking(!stopBanking)} isActive={stopBanking}>
-              Stop banking and financial transactions
-            </ActionButton>
-            <ActionButton onClick={() => setStopTrade(!stopTrade)} isActive={stopTrade}>
-              Stop cross-border trade
-            </ActionButton>
-            <ActionButton onClick={handleMobilizeTroops} isActive={mobilizeTroops} isLarge>
-              Mobilize troops
-            </ActionButton>
-            <ActionButton onClick={handleGrowPotatoes} isActive={growPotatoes} isLarge>
-              Start growing potatoes
-            </ActionButton>
-          </div>
-          <div style={{ width: '60%' }}>
-            <SwitzerlandMap 
-              stopBanking={stopBanking} 
-              mobilizeTroops={mobilizeTroops} 
-              growPotatoes={growPotatoes}
-            />
-          </div>
+      {renderScoreboard()}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ width: '40%', marginRight: '2rem' }}>
+          <ActionButton onClick={() => setStopBanking(!stopBanking)} isActive={stopBanking}>
+            Stop banking and financial transactions
+          </ActionButton>
+          <ActionButton onClick={handleStopTrade} isActive={stopTrade}>
+            Stop cross-border trade
+          </ActionButton>
+          <ActionButton onClick={handleMobilizeTroops} isActive={mobilizeTroops} isLarge>
+            Mobilize troops
+          </ActionButton>
+          <ActionButton onClick={handleGrowPotatoes} isActive={growPotatoes} isLarge>
+            Start growing potatoes
+          </ActionButton>
         </div>
+        <div style={{ width: '60%' }}>
+          <SwitzerlandMap 
+            stopBanking={stopBanking} 
+            mobilizeTroops={mobilizeTroops} 
+            growPotatoes={growPotatoes}
+          />
+        </div>
+      </div>
       <button style={{...buttonStyle, marginTop: '2rem'}} onClick={handleContinue}>
         Continue
       </button>
